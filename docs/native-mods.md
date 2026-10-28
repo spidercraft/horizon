@@ -19,6 +19,18 @@ builds after its Nightly is replaced. All the mods of one build must pin the sam
 launcher says which mod pins which, and the player installs versions made for the same Nightly. A bundle with no
 pin builds on the commit of the installed version the build starts from.
 
+## Hook points
+
+A mod that hooks only the game's **hook points** doesn't need one pinned commit.
+`crates/horizon-client/src/game/native_hooks.rs` holds them. They are empty functions the game calls at fixed
+places: each frame, each tick, the HUD, keys, the wheel, commands, the zoom, the minimap, and the Options > Mods
+list with each mod's settings page. Next to them are stable helpers for drawing, settings, keys and chat.
+
+Hook points are only ever added, and each addition raises `NATIVE_HOOKS_API`. A bundle that hooks only these
+names the API it needs (`hooks` in its `horizon-native.json`). The launcher builds it on any Horizon whose API is
+at least that one, and pins its own copy to the commit it builds on. Horizon's own native mods (zoom, fps-overlay,
+keystrokes, minimap, in horizon-rust/horizon-mods under `native/<name>/`) are built this way.
+
 ## What the launcher does
 
 In the window: install a native mod from the Mods page, turn on Settings → Game → **Native mods (experimental)**,
